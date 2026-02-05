@@ -56,7 +56,7 @@
         /* FOGLIO: Molto più basso e stretto */
         .paper {
             position: absolute;
-            width: 48px; /* Ancora più stretto */
+            width: 55px; /* Ancora più stretto */
             height: 45px;
             background: white;
             border: 1px solid #ddd;
@@ -83,11 +83,11 @@
         /* POSIZIONE DI ARRIVO: Ora copre molto di più la busta */
         .paper.revealed {
             opacity: 1;
-            transform: translateY(-5px); /* Abbassato notevolmente */
+            transform: translateY(-8px); /* Abbassato notevolmente */
         }
 
         .big .paper.revealed {
-            transform: translateY(-20px); /* Abbassato notevolmente */
+            transform: translateY(-5px); /* Abbassato notevolmente */
         }
 
         /* CUORE: Solo la punta estrema visibile */
@@ -109,11 +109,11 @@
         .heart-seal.revealed {
             opacity: 1;
             /* Sale pochissimo rispetto al foglio per mostrare solo la punta */
-            transform: translateY(-20px) rotate(180deg); 
+            transform: translateY(-5px) rotate(180deg); 
         }
 
         .big .heart-seal.revealed {
-            transform: translateY(-20px) rotate(180deg);
+            transform: translateY(-5px) rotate(180deg);
         }
 
         /* LA BUSTA */
