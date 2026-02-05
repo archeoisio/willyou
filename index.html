@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Valentine Letters</title>
     <style>
-        /* Blocco totale dello zoom e interazioni */
         html, body {
             touch-action: none;
             overflow: hidden;
@@ -24,86 +23,112 @@
         .container {
             display: flex;
             flex-direction: column;
-            gap: 60px;
+            gap: 50px;
             align-items: center;
         }
 
         .grid-top {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 25px;
         }
 
+        /* Unità base: buste grandi per contenere i fogli */
         .letter-unit {
             position: relative;
-            width: 80px;
-            height: 120px;
+            width: 100px;
+            height: 130px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
         }
 
-        /* IL FOGLIO CHE ESCE */
+        /* Unità speciale per Valentine (ancora più grande) */
+        .letter-unit.big {
+            width: 180px;
+            height: 180px;
+        }
+
+        /* IL FOGLIO: Davanti a tutto (z-index 10) */
         .paper-sheet {
             position: absolute;
-            width: 75px;
-            height: 55px;
+            width: 90px;
+            height: 60px;
             background: #ffffff;
-            border: 1px solid #ddd;
+            border: 1px solid #eee;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 16px;
             font-weight: bold;
             color: #ff4d6d;
             text-transform: uppercase;
-            z-index: 2; /* Sopra il sigillo, sotto la parte frontale della busta */
+            z-index: 10; 
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(0);
             transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            pointer-events: none; /* Il foglio non deve rubare il click */
+        }
+
+        .big .paper-sheet {
+            width: 160px;
+            height: 80px;
+            font-size: 20px;
         }
 
         .paper-sheet.revealed {
             opacity: 1;
-            transform: translateY(-45px); /* Sale e si sovrappone alla busta */
+            transform: translateY(-65px); /* Posizione sopra la busta */
         }
 
-        /* IL SIGILLO (Retro della busta aperta) */
+        /* IL CUORE (Sigillo ruotato di 180°) */
         .heart-seal {
             position: absolute;
-            font-size: 25px;
-            z-index: 1; /* Livello più basso */
+            font-size: 30px;
+            z-index: 1; 
             opacity: 0;
-            bottom: 60px;
+            bottom: 70px;
             transition: all 0.6s ease;
+            transform: rotate(180deg);
+        }
+
+        .big .heart-seal {
+            font-size: 50px;
+            bottom: 95px;
         }
 
         .heart-seal.revealed {
             opacity: 1;
-            transform: translateY(-35px) rotate(-15deg);
+            transform: translateY(-45px) rotate(180deg);
         }
 
-        /* LA BUSTA */
+        /* LA BUSTA (z-index 5) */
         .letter-btn {
-            font-size: 75px;
+            font-size: 90px; /* Buste decisamente grandi */
             background: none;
             border: none;
             cursor: pointer;
-            z-index: 3; /* Sempre davanti */
+            z-index: 5; 
             line-height: 1;
             padding: 0;
             transition: transform 0.2s;
         }
 
+        .big .letter-btn {
+            font-size: 140px;
+        }
+
         .letter-btn:disabled {
-            opacity: 0.1;
+            opacity: 0.15;
             filter: grayscale(1);
             cursor: default;
         }
 
-        .letter-btn:hover:not(:disabled) {
-            transform: scale(1.05);
+        /* Classe aggiunta via JS per bloccare i click dopo l'apertura */
+        .opened {
+            pointer-events: none !important;
+            cursor: default !important;
         }
     </style>
 </head>
@@ -133,15 +158,15 @@
             </div>
         </div>
 
-        <div class="letter-unit">
+        <div class="letter-unit big">
             <div class="heart-seal" id="seal-5">❤️</div>
-            <div class="paper-sheet" id="paper-5" style="width: 95px;">Valentine?</div>
+            <div class="paper-sheet" id="paper-5">Valentine?</div>
             <button class="letter-btn" id="btn-5" onclick="revealLetter(5)" disabled>💌</button>
         </div>
     </div>
 
     <script>
-        // Blocco Zoom via JS per sicurezza ulteriore
+        // Blocco Zoom
         window.addEventListener('touchstart', function(e) {
             if (e.touches.length > 1) e.preventDefault();
         }, {passive: false});
@@ -151,25 +176,26 @@
             const paper = document.getElementById(`paper-${num}`);
             const seal = document.getElementById(`seal-${num}`);
 
-            // 1. Cambia icona busta
+            // Cambia stato e icona
             btn.innerText = "✉️";
-            btn.style.cursor = "default";
+            btn.classList.add('opened'); // Rende la busta non più cliccabile
             
-            // 2. Anima foglio e cuore retrostante
+            // Animazione foglio e sigillo
             paper.classList.add('revealed');
             seal.classList.add('revealed');
 
-            // 3. Sblocca la prossima lettera dopo un breve ritardo
+            // Sblocca la successiva
             const nextBtn = document.getElementById(`btn-${num + 1}`);
             if (nextBtn) {
                 setTimeout(() => {
                     nextBtn.disabled = false;
-                }, 600); 
+                }, 700); 
             }
         }
     </script>
 </body>
 </html>
+
 
 
 
