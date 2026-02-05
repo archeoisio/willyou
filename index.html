@@ -3,199 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Valentine Letters</title>
+    <title>Valentine's Day</title>
     <style>
+        :root {
+            --pink-bg: #fff0f3;
+            --heart-red: #ff4d6d;
+            --envelope-color: #f1f1f1;
+            --envelope-dark: #e0e0e0;
+        }
+
         html, body {
             touch-action: none;
             overflow: hidden;
-            background-color: #fff0f3;
-            font-family: 'Georgia', serif;
+            background-color: var(--pink-bg);
+            font-family: 'Arial', sans-serif;
             height: 100%;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
-        .container {
+        .main-container {
             display: flex;
             flex-direction: column;
-            gap: 50px;
             align-items: center;
+            gap: 40px;
+            width: 100%;
         }
 
+        /* Layout 4 sopra */
         .grid-top {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
+            gap: 10px;
+            width: 90%;
+            max-width: 400px;
         }
 
-        /* Unità base: buste grandi per contenere i fogli */
-        .letter-unit {
+        .letter-wrapper {
             position: relative;
-            width: 100px;
-            height: 130px;
+            height: 100px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
         }
 
-        /* Unità speciale per Valentine (ancora più grande) */
-        .letter-unit.big {
-            width: 180px;
-            height: 180px;
+        /* L'ultima lettera sotto */
+        .letter-wrapper.big {
+            height: 140px;
+            width: 160px;
         }
 
-        /* IL FOGLIO: Davanti a tutto (z-index 10) */
-        .paper-sheet {
+        /* IL FOGLIO (z-index 10: davanti a tutto) */
+        .paper {
             position: absolute;
-            width: 90px;
-            height: 60px;
-            background: #ffffff;
-            border: 1px solid #eee;
+            width: 70px;
+            height: 50px;
+            background: white;
+            border: 1px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
-            color: #ff4d6d;
+            color: var(--heart-red);
             text-transform: uppercase;
-            z-index: 10; 
+            z-index: 10;
             opacity: 0;
-            transform: translateY(0);
-            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            pointer-events: none; /* Il foglio non deve rubare il click */
+            transform: translateY(10px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .big .paper-sheet {
-            width: 160px;
-            height: 80px;
-            font-size: 20px;
+        .big .paper {
+            width: 120px;
+            height: 70px;
+            font-size: 16px;
         }
 
-        .paper-sheet.revealed {
+        .paper.revealed {
             opacity: 1;
-            transform: translateY(-65px); /* Posizione sopra la busta */
+            transform: translateY(-35px); /* Copre la parte superiore della busta */
         }
 
-        /* IL CUORE (Sigillo ruotato di 180°) */
-        .heart-seal {
+        /* IL CUORE (z-index 1: dietro il foglio, ruotato di 180°) */
+        .heart-tip {
             position: absolute;
-            font-size: 30px;
-            z-index: 1; 
+            font-size: 20px;
+            z-index: 1;
             opacity: 0;
-            bottom: 70px;
+            bottom: 60px;
+            transform: rotate(180deg); /* Ruotato */
             transition: all 0.6s ease;
-            transform: rotate(180deg);
         }
 
-        .big .heart-seal {
-            font-size: 50px;
-            bottom: 95px;
-        }
+        .big .heart-tip { font-size: 35px; bottom: 80px; }
 
-        .heart-seal.revealed {
+        .heart-tip.revealed {
             opacity: 1;
-            transform: translateY(-45px) rotate(180deg);
+            transform: translateY(-25px) rotate(180deg);
         }
 
         /* LA BUSTA (z-index 5) */
-        .letter-btn {
-            font-size: 90px; /* Buste decisamente grandi */
-            background: none;
-            border: none;
+        .envelope {
+            font-size: 65px;
             cursor: pointer;
-            z-index: 5; 
-            line-height: 1;
-            padding: 0;
+            z-index: 5;
             transition: transform 0.2s;
+            line-height: 1;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
         }
 
-        .big .letter-btn {
-            font-size: 140px;
-        }
+        .big .envelope { font-size: 110px; }
 
-        .letter-btn:disabled {
-            opacity: 0.15;
+        .envelope.disabled {
+            opacity: 0.2;
             filter: grayscale(1);
-            cursor: default;
+            pointer-events: none;
         }
 
-        /* Classe aggiunta via JS per bloccare i click dopo l'apertura */
-        .opened {
-            pointer-events: none !important;
-            cursor: default !important;
+        .envelope.opened {
+            pointer-events: none;
         }
+
+        /* Spazio per pulsanti SI/NO */
+        #final-buttons {
+            display: none;
+            gap: 20px;
+            margin-top: 20px;
+            animation: fadeIn 1s forwards;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .yes { background-color: #4caf50; }
+        .no { background-color: #ff4d6d; }
+
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="container">
+    <div class="main-container">
         <div class="grid-top">
-            <div class="letter-unit">
-                <div class="heart-seal" id="seal-1">❤️</div>
-                <div class="paper-sheet" id="paper-1">Will</div>
-                <button class="letter-btn" id="btn-1" onclick="revealLetter(1)">💌</button>
+            <div class="letter-wrapper">
+                <div class="heart-tip" id="heart-1">❤️</div>
+                <div class="paper" id="paper-1">Will</div>
+                <div class="envelope" id="env-1" onclick="openLetter(1)">💌</div>
             </div>
-            <div class="letter-unit">
-                <div class="heart-seal" id="seal-2">❤️</div>
-                <div class="paper-sheet" id="paper-2">You</div>
-                <button class="letter-btn" id="btn-2" onclick="revealLetter(2)" disabled>💌</button>
+            <div class="letter-wrapper">
+                <div class="heart-tip" id="heart-2">❤️</div>
+                <div class="paper" id="paper-2">You</div>
+                <div class="envelope disabled" id="env-2" onclick="openLetter(2)">💌</div>
             </div>
-            <div class="letter-unit">
-                <div class="heart-seal" id="seal-3">❤️</div>
-                <div class="paper-sheet" id="paper-3">Be</div>
-                <button class="letter-btn" id="btn-3" onclick="revealLetter(3)" disabled>💌</button>
+            <div class="letter-wrapper">
+                <div class="heart-tip" id="heart-3">❤️</div>
+                <div class="paper" id="paper-3">Be</div>
+                <div class="envelope disabled" id="env-3" onclick="openLetter(3)">💌</div>
             </div>
-            <div class="letter-unit">
-                <div class="heart-seal" id="seal-4">❤️</div>
-                <div class="paper-sheet" id="paper-4">My</div>
-                <button class="letter-btn" id="btn-4" onclick="revealLetter(4)" disabled>💌</button>
+            <div class="letter-wrapper">
+                <div class="heart-tip" id="heart-4">❤️</div>
+                <div class="paper" id="paper-4">My</div>
+                <div class="envelope disabled" id="env-4" onclick="openLetter(4)">💌</div>
             </div>
         </div>
 
-        <div class="letter-unit big">
-            <div class="heart-seal" id="seal-5">❤️</div>
-            <div class="paper-sheet" id="paper-5">Valentine?</div>
-            <button class="letter-btn" id="btn-5" onclick="revealLetter(5)" disabled>💌</button>
+        <div class="letter-wrapper big">
+            <div class="heart-tip" id="heart-5">❤️</div>
+            <div class="paper" id="paper-5">Valentine?</div>
+            <div class="envelope disabled" id="env-5" onclick="openLetter(5)">💌</div>
+        </div>
+
+        <div id="final-buttons">
+            <button class="btn yes">YES</button>
+            <button class="btn no">NO</button>
         </div>
     </div>
 
     <script>
         // Blocco Zoom
-        window.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) e.preventDefault();
-        }, {passive: false});
+        window.addEventListener('wheel', e => { if(e.ctrlKey) e.preventDefault(); }, { passive: false });
 
-        function revealLetter(num) {
-            const btn = document.getElementById(`btn-${num}`);
+        function openLetter(num) {
+            const env = document.getElementById(`env-${num}`);
             const paper = document.getElementById(`paper-${num}`);
-            const seal = document.getElementById(`seal-${num}`);
+            const heart = document.getElementById(`heart-${num}`);
 
-            // Cambia stato e icona
-            btn.innerText = "✉️";
-            btn.classList.add('opened'); // Rende la busta non più cliccabile
-            
-            // Animazione foglio e sigillo
+            // Cambia emoji in aperta
+            env.innerText = "✉️";
+            env.classList.add('opened');
+
+            // Anima foglio e cuore
             paper.classList.add('revealed');
-            seal.classList.add('revealed');
+            heart.classList.add('revealed');
 
-            // Sblocca la successiva
-            const nextBtn = document.getElementById(`btn-${num + 1}`);
-            if (nextBtn) {
+            // Sblocca successiva
+            const nextEnv = document.getElementById(`env-${num + 1}`);
+            if (nextEnv) {
                 setTimeout(() => {
-                    nextBtn.disabled = false;
-                }, 700); 
+                    nextEnv.classList.remove('disabled');
+                }, 600);
+            } else {
+                // Se è l'ultima, mostra i pulsanti dopo un po'
+                setTimeout(() => {
+                    document.getElementById('final-buttons').style.display = 'flex';
+                }, 1000);
             }
         }
     </script>
 </body>
 </html>
-
 
 
 
