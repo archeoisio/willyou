@@ -3,113 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Un messaggio per te ❤️</title>
+    <title>Le mie Lettere</title>
     <style>
-        body {
-            background-color: #ffebf0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+        :root {
+            --bg-color: #fce4ec;
+            --accent-color: #ff80ab;
         }
 
-        h1 { color: #d63384; margin-bottom: 30px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            gap: 20px;
+        }
 
         .container {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
-        .envelope {
-            width: 100px;
-            height: 70px;
-            background-color: #ff4d6d;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Pulsante Lettera */
+        .letter-btn {
+            font-size: 4rem; /* Dimensione emoji */
+            background: none;
+            border: none;
             cursor: pointer;
-            position: relative;
-            transition: transform 0.3s, background-color 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, opacity 0.3s;
+            padding: 0;
+            line-height: 1;
         }
 
-        .envelope:hover {
-            transform: translateY(-10px) scale(1.05);
-            background-color: #ff758f;
+        /* Lettera bloccata */
+        .letter-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(1);
         }
 
-        .envelope::before {
-            content: "✉️";
-            font-size: 30px;
+        .letter-btn:hover:not(:disabled) {
+            transform: scale(1.1);
         }
 
-        /* Il messaggio che appare */
-        .message-box {
+        /* Riquadro Contenuto (Messaggio) */
+        .content-box {
+            display: none; /* Nascosto all'inizio */
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0);
+            transform: translate(-50%, -50%);
             background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid var(--accent-color);
             text-align: center;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10;
+            cursor: pointer; /* Indica che si può cliccare per chiudere */
+            z-index: 100;
+            max-width: 80%;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .message-box.active { transform: translate(-50%, -50%) scale(1); }
-
-        .message-box h2 {
-            color: #ff4d6d;
-            font-size: 2.5rem;
-            margin: 0;
+        @keyframes popIn {
+            from { opacity: 0; transform: translate(-50%, -40%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
         .overlay {
+            display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3);
-            display: none;
-            z-index: 5;
+            background: rgba(0,0,0,0.2);
+            z-index: 90;
         }
     </style>
 </head>
 <body>
 
-    <h1>Clicca sulle lettere... ❤️</h1>
-
     <div class="container">
-        <div class="envelope" onclick="showMessage('Will')"></div>
-        <div class="envelope" onclick="showMessage('you')"></div>
-        <div class="envelope" onclick="showMessage('be')"></div>
-        <div class="envelope" onclick="showMessage('my')"></div>
-        <div class="envelope" onclick="showMessage('valentine?')"></div>
+        <button class="letter-btn" id="btn-1" onclick="openLetter(1)">💌</button>
+        <button class="letter-btn" id="btn-2" onclick="openLetter(2)" disabled>💌</button>
+        <button class="letter-btn" id="btn-3" onclick="openLetter(3)" disabled>💌</button>
     </div>
 
-    <div class="overlay" id="overlay" onclick="closeMessage()"></div>
-    <div class="message-box" id="messageBox">
-        <h2 id="text"></h2>
+    <div id="overlay" class="overlay"></div>
+    <div id="content-box" class="content-box" onclick="closeLetter()">
+        <p id="message-text"></p>
+        <small style="color: #999;">(Clicca qui per chiudere)</small>
     </div>
 
     <script>
-        function showMessage(word) {
-            document.getElementById('text').innerText = word;
-            document.getElementById('messageBox').classList.add('active');
-            document.getElementById('overlay').style.display = 'block';
+        const messages = {
+            1: "Questo è il contenuto della prima lettera! ❤️",
+            2: "Hai sbloccato la seconda! Ecco una sorpresa. 🌟",
+            3: "L'ultima lettera: sei arrivata alla fine! 🎂"
+        };
+
+        let currentOpen = 0;
+
+        function openLetter(num) {
+            const btn = document.getElementById(`btn-${num}`);
+            const contentBox = document.getElementById('content-box');
+            const messageText = document.getElementById('message-text');
+            const overlay = document.getElementById('overlay');
+
+            // Cambia emoji in "aperta"
+            btn.innerText = "✉️"; 
+            
+            // Mostra il messaggio
+            messageText.innerText = messages[num];
+            contentBox.style.display = 'block';
+            overlay.style.display = 'block';
+
+            // Sblocca la lettera successiva
+            currentOpen = num;
+            const nextBtn = document.getElementById(`btn-${num + 1}`);
+            if (nextBtn) {
+                nextBtn.disabled = false;
+            }
         }
 
-        function closeMessage() {
-            document.getElementById('messageBox').classList.remove('active');
+        function closeLetter() {
+            document.getElementById('content-box').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
         }
     </script>
+
 </body>
 </html>
+
