@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un messaggio per te ❤️</title>
+    <style>
+        body {
+            background-color: #ffebf0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 { color: #d63384; margin-bottom: 30px; }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .envelope {
+            width: 100px;
+            height: 70px;
+            background-color: #ff4d6d;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s, background-color 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .envelope:hover {
+            transform: translateY(-10px) scale(1.05);
+            background-color: #ff758f;
+        }
+
+        .envelope::before {
+            content: "✉️";
+            font-size: 30px;
+        }
+
+        /* Il messaggio che appare */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+
+        .message-box.active { transform: translate(-50%, -50%) scale(1); }
+
+        .message-box h2 {
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Clicca sulle lettere... ❤️</h1>
+
+    <div class="container">
+        <div class="envelope" onclick="showMessage('Will')"></div>
+        <div class="envelope" onclick="showMessage('you')"></div>
+        <div class="envelope" onclick="showMessage('be')"></div>
+        <div class="envelope" onclick="showMessage('my')"></div>
+        <div class="envelope" onclick="showMessage('valentine?')"></div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeMessage()"></div>
+    <div class="message-box" id="messageBox">
+        <h2 id="text"></h2>
+    </div>
+
+    <script>
+        function showMessage(word) {
+            document.getElementById('text').innerText = word;
+            document.getElementById('messageBox').classList.add('active');
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeMessage() {
+            document.getElementById('messageBox').classList.remove('active');
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
