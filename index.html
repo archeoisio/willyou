@@ -56,7 +56,7 @@
         /* FOGLIO: Molto più basso e stretto */
         .paper {
             position: absolute;
-            width: 55px; /* Ancora più stretto */
+            width: 57px; /* Ancora più stretto */
             height: 45px;
             background: white;
             border: 1px solid #ddd;
@@ -69,7 +69,7 @@
             text-transform: uppercase;
             z-index: 10;
             opacity: 0;
-            transform: translateY(5px);
+            transform: translateY(20px);
             transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -83,11 +83,11 @@
         /* POSIZIONE DI ARRIVO: Ora copre molto di più la busta */
         .paper.revealed {
             opacity: 1;
-            transform: translateY(-8px); /* Abbassato notevolmente */
+            transform: translateY(-20px); /* Abbassato notevolmente */
         }
 
         .big .paper.revealed {
-            transform: translateY(-5px); /* Abbassato notevolmente */
+            transform: translateY(-40px); /* Abbassato notevolmente */
         }
 
         /* CUORE: Solo la punta estrema visibile */
