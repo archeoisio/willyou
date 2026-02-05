@@ -3,23 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le mie Lettere</title>
+    <title>Valentine's Day</title>
     <style>
-        :root {
-            --bg-color: #fce4ec;
-            --accent-color: #ff80ab;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            background-color: #fff0f3;
+            font-family: 'Courier New', Courier, monospace; /* Tocco più "letterario" */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
             margin: 0;
-            flex-direction: column;
-            gap: 20px;
+            overflow: hidden;
         }
 
         .container {
@@ -29,20 +24,43 @@
             justify-content: center;
         }
 
-        /* Pulsante Lettera */
+        .letter-container {
+            display: flex;
+            flex-direction: column; /* Mette il testo sopra il pulsante */
+            align-items: center;
+            justify-content: flex-end;
+            height: 150px; /* Spazio riservato per far apparire la parola */
+        }
+
+        /* La parola che appare SOPRA */
+        .word-above {
+            font-size: 1.2rem;
+            color: #ff4d6d;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            opacity: 0; /* Nascosta inizialmente */
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translateY(10px);
+        }
+
+        .word-above.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .letter-btn {
-            font-size: 4rem; /* Dimensione emoji */
+            font-size: 70px;
             background: none;
             border: none;
             cursor: pointer;
-            transition: transform 0.3s ease, opacity 0.3s;
+            transition: transform 0.2s;
             padding: 0;
             line-height: 1;
         }
 
-        /* Lettera bloccata */
         .letter-btn:disabled {
-            opacity: 0.3;
+            opacity: 0.15;
             cursor: not-allowed;
             filter: grayscale(1);
         }
@@ -51,90 +69,111 @@
             transform: scale(1.1);
         }
 
-        /* Riquadro Contenuto (Messaggio) */
-        .content-box {
-            display: none; /* Nascosto all'inizio */
+        /* Il Popup */
+        .modal {
+            display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            padding: 25px;
+            padding: 50px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 2px solid var(--accent-color);
+            box-shadow: 0 15px 50px rgba(255, 77, 109, 0.2);
+            border: 2px solid #ff4d6d;
+            z-index: 1000;
+            cursor: pointer; /* Clicca per chiudere */
             text-align: center;
-            cursor: pointer; /* Indica che si può cliccare per chiudere */
-            z-index: 100;
-            max-width: 80%;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: bounceIn 0.5s ease;
         }
 
-        @keyframes popIn {
-            from { opacity: 0; transform: translate(-50%, -40%) scale(0.8); }
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        @keyframes bounceIn {
+            0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
+
+        .modal h1 { color: #ff4d6d; font-size: 2.5rem; margin: 0; }
 
         .overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.2);
-            z-index: 90;
+            background: rgba(0,0,0,0.1);
+            z-index: 999;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <button class="letter-btn" id="btn-1" onclick="openLetter(1)">💌</button>
-        <button class="letter-btn" id="btn-2" onclick="openLetter(2)" disabled>💌</button>
-        <button class="letter-btn" id="btn-3" onclick="openLetter(3)" disabled>💌</button>
+        <div class="letter-container">
+            <div class="word-above" id="word-1">Will</div>
+            <button class="letter-btn" id="btn-1" onclick="openLetter(1)">💌</button>
+        </div>
+        <div class="letter-container">
+            <div class="word-above" id="word-2">You</div>
+            <button class="letter-btn" id="btn-2" onclick="openLetter(2)" disabled>💌</button>
+        </div>
+        <div class="letter-container">
+            <div class="word-above" id="word-3">Be</div>
+            <button class="letter-btn" id="btn-3" onclick="openLetter(3)" disabled>💌</button>
+        </div>
+        <div class="letter-container">
+            <div class="word-above" id="word-4">My</div>
+            <button class="letter-btn" id="btn-4" onclick="openLetter(4)" disabled>💌</button>
+        </div>
+        <div class="letter-container">
+            <div class="word-above" id="word-5">Valentine?</div>
+            <button class="letter-btn" id="btn-5" onclick="openLetter(5)" disabled>💌</button>
+        </div>
     </div>
 
     <div id="overlay" class="overlay"></div>
-    <div id="content-box" class="content-box" onclick="closeLetter()">
-        <p id="message-text"></p>
-        <small style="color: #999;">(Clicca qui per chiudere)</small>
+    <div id="modal" class="modal" onclick="closeModal()">
+        <h1 id="modal-text"></h1>
+        <p style="color: #ccc; margin-top: 15px; font-size: 0.8rem;">(Clicca qui per chiudere)</p>
     </div>
 
     <script>
-        const messages = {
-            1: "Questo è il contenuto della prima lettera! ❤️",
-            2: "Hai sbloccato la seconda! Ecco una sorpresa. 🌟",
-            3: "L'ultima lettera: sei arrivata alla fine! 🎂"
+        const content = {
+            1: "Will",
+            2: "You",
+            3: "Be",
+            4: "My",
+            5: "Valentine?"
         };
-
-        let currentOpen = 0;
 
         function openLetter(num) {
             const btn = document.getElementById(`btn-${num}`);
-            const contentBox = document.getElementById('content-box');
-            const messageText = document.getElementById('message-text');
+            const word = document.getElementById(`word-${num}`);
+            const modal = document.getElementById('modal');
+            const modalText = document.getElementById('modal-text');
             const overlay = document.getElementById('overlay');
 
-            // Cambia emoji in "aperta"
-            btn.innerText = "✉️"; 
+            // 1. Cambia emoji in busta aperta
+            btn.innerText = "✉️";
             
-            // Mostra il messaggio
-            messageText.innerText = messages[num];
-            contentBox.style.display = 'block';
+            // 2. Mostra il popup con la parola
+            modalText.innerText = content[num];
+            modal.style.display = 'block';
             overlay.style.display = 'block';
 
-            // Sblocca la lettera successiva
-            currentOpen = num;
+            // 3. Fai apparire la parola SOPRA la lettera
+            word.classList.add('visible');
+
+            // 4. Sblocca la successiva
             const nextBtn = document.getElementById(`btn-${num + 1}`);
             if (nextBtn) {
                 nextBtn.disabled = false;
             }
         }
 
-        function closeLetter() {
-            document.getElementById('content-box').style.display = 'none';
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
         }
     </script>
-
 </body>
 </html>
+
 
