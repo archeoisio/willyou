@@ -16,21 +16,23 @@
         }
 
         body {
-            touch-action: pan-y;
-            overflow-x: hidden;
+            /* Scroll bloccato all'inizio */
+            overflow: hidden; 
             background-color: var(--bg-pink);
             font-family: 'Georgia', serif;
             margin: 0;
             user-select: none;
+            height: 100vh;
         }
 
         .page-section {
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
+            flex-shrink: 0;
         }
 
         .main-container {
@@ -62,7 +64,6 @@
             width: 160px;
         }
 
-        /* --- FOGLIO BIANCO (Aumentato di altre 2 unità) --- */
         .paper {
             position: absolute;
             width: 59px; 
@@ -72,7 +73,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px; /* Salito a 14px */
+            font-size: 14px; 
             font-weight: bold;
             color: var(--heart-red);
             font-family: 'Dancing Script', cursive;
@@ -86,7 +87,7 @@
         .big .paper {
             width: 104px; 
             height: 60px;
-            font-size: 18px; /* Salito a 18px */
+            font-size: 18px; 
         }
 
         .paper.revealed {
@@ -98,7 +99,6 @@
             transform: translateY(-30px);
         }
 
-        /* --- BUSTA --- */
         .envelope-btn {
             font-size: 60px;
             background: none;
@@ -126,6 +126,7 @@
             display: none;
             gap: 15px;
             margin-top: 10px;
+            align-items: center;
         }
 
         .btn-choice {
@@ -136,12 +137,18 @@
             cursor: pointer;
             color: white;
             font-size: 1rem;
+            transition: all 0.3s ease; /* Transizione fluida per l'ingrandimento */
         }
 
         .yes { background-color: #4caf50; z-index: 100; }
         .no { background-color: #ff4d6d; z-index: 100; }
 
-        /* --- SECONDO BLOCCO --- */
+        /* Classe per ingrandire il tasto SI */
+        .yes-giant {
+            transform: scale(2);
+            margin: 20px;
+        }
+
         #proposal-section {
             display: none;
             background-color: white;
@@ -158,7 +165,7 @@
         }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div class="page-section" id="intro-section">
         <div class="main-container">
@@ -187,7 +194,7 @@
             </div>
 
             <div id="buttons-area">
-                <button class="btn-choice yes" onclick="goToProposal()">SÌ</button>
+                <button class="btn-choice yes" id="yes-btn" onclick="goToProposal()">SÌ</button>
                 <button class="btn-choice no" id="no-btn">NO</button>
             </div>
         </div>
@@ -201,9 +208,12 @@
 
     <script>
         let noClickCount = 0;
+        const noBtn = document.getElementById('no-btn');
+        const yesBtn = document.getElementById('yes-btn');
 
-        window.addEventListener('touchstart', e => { 
-            if (e.touches.length > 1) e.preventDefault(); 
+        // Disabilita scroll touch (per mobile)
+        window.addEventListener('touchmove', e => { 
+            if (document.body.style.overflow !== 'auto') e.preventDefault(); 
         }, {passive: false});
 
         function openLetter(num) {
@@ -220,16 +230,21 @@
             } else {
                 setTimeout(() => { 
                     document.getElementById('buttons-area').style.display = 'flex'; 
-                    // Rimosso lo scrollIntoView automatico qui
                 }, 800);
             }
         }
 
-        const noBtn = document.getElementById('no-btn');
         function moveNo(e) {
             noClickCount++;
+            
             if (noClickCount === 5) alert("Risposta sbagliata ritenta");
-            if (noClickCount === 10) alert("😤😤😤😤😤");
+            
+            if (noClickCount === 10) {
+                alert("😤😤😤😤😤");
+                noBtn.remove(); // Fa sparire il tasto NO
+                yesBtn.classList.add('yes-giant'); // Ingrandisce il tasto SI
+                return;
+            }
 
             const maxX = window.innerWidth - noBtn.offsetWidth;
             const maxY = window.innerHeight - noBtn.offsetHeight;
@@ -244,20 +259,28 @@
         noBtn.addEventListener('touchstart', moveNo);
 
         function goToProposal() {
-            // Rimuovi il tasto NO
             if (noBtn) noBtn.remove();
 
             const target = document.getElementById('proposal-section');
             target.style.display = 'flex'; 
             
-            // Piccola attesa per assicurarsi che il display flex sia applicato prima dello scroll
+            // Abilita scroll solo per scendere
+            document.body.style.overflow = 'auto';
+            
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth' });
+                // Dopo lo scroll, blocca di nuovo tutto per impedire di tornare su
+                setTimeout(() => {
+                    document.body.style.overflow = 'hidden';
+                    // Forza la posizione per sicurezza
+                    window.scrollTo(0, target.offsetTop);
+                }, 1000);
             }, 50);
         }
     </script>
 </body>
 </html>
+
 
 
 
