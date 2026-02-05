@@ -4,24 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Valentine's Letters</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-pink: #fff0f3;
             --heart-red: #ff4d6d;
         }
 
-        html, body {
-            touch-action: none;
-            overflow: hidden;
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            touch-action: pan-y;
+            overflow-x: hidden;
             background-color: var(--bg-pink);
             font-family: 'Georgia', serif;
-            height: 100%;
             margin: 0;
+            user-select: none;
+        }
+
+        /* Sezione Principale */
+        .page-section {
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            user-select: none;
+            width: 100%;
         }
 
         .main-container {
@@ -57,7 +67,7 @@
         .paper {
             position: absolute;
             width: 59px; 
-            height: 42px; /* Altezza fisica fogli piccoli */
+            height: 42px;
             background: white;
             border: 1px solid #ddd;
             display: flex;
@@ -66,7 +76,9 @@
             font-size: 10px;
             font-weight: bold;
             color: var(--heart-red);
-            text-transform: uppercase;
+            /* Applicazione font corsivo */
+            font-family: 'Dancing Script', cursive;
+            text-transform: none; /* Il corsivo sta meglio senza tutto maiuscolo */
             z-index: 10;
             opacity: 0;
             transform: translateY(6px);
@@ -76,14 +88,13 @@
 
         .big .paper {
             width: 104px; 
-            height: 60px; /* Altezza fisica foglio grande */
+            height: 60px;
             font-size: 14px;
         }
 
-        /* --- POSIZIONE DI USCITA --- */
         .paper.revealed {
             opacity: 1;
-            transform: translateY(-20px); /* Altezza di arresto foglio */
+            transform: translateY(-20px);
         }
 
         .big .paper.revealed {
@@ -132,52 +143,77 @@
 
         .yes { background-color: #4caf50; }
         .no { background-color: #ff4d6d; }
+
+        /* --- SECONDO BLOCCO (PROPOSTA FINALE) --- */
+        #proposal-section {
+            background-color: white;
+            color: var(--heart-red);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .proposal-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            max-width: 80%;
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="main-container">
-        <div class="grid-top">
-            <div class="letter-unit">
-                <div class="paper" id="paper-1">Will</div>
-                <button class="envelope-btn" id="btn-1" onclick="openLetter(1)">💌</button>
+    <div class="page-section" id="intro-section">
+        <div class="main-container">
+            <div class="grid-top">
+                <div class="letter-unit">
+                    <div class="paper" id="paper-1">Will</div>
+                    <button class="envelope-btn" id="btn-1" onclick="openLetter(1)">💌</button>
+                </div>
+                <div class="letter-unit">
+                    <div class="paper" id="paper-2">You</div>
+                    <button class="envelope-btn" id="btn-2" onclick="openLetter(2)" disabled>💌</button>
+                </div>
+                <div class="letter-unit">
+                    <div class="paper" id="paper-3">Be</div>
+                    <button class="envelope-btn" id="btn-3" onclick="openLetter(3)" disabled>💌</button>
+                </div>
+                <div class="letter-unit">
+                    <div class="paper" id="paper-4">My</div>
+                    <button class="envelope-btn" id="btn-4" onclick="openLetter(4)" disabled>💌</button>
+                </div>
             </div>
-            <div class="letter-unit">
-                <div class="paper" id="paper-2">You</div>
-                <button class="envelope-btn" id="btn-2" onclick="openLetter(2)" disabled>💌</button>
+
+            <div class="letter-unit big">
+                <div class="paper" id="paper-5">Valentine?</div>
+                <button class="envelope-btn" id="btn-5" onclick="openLetter(5)" disabled>💌</button>
             </div>
-            <div class="letter-unit">
-                <div class="paper" id="paper-3">Be</div>
-                <button class="envelope-btn" id="btn-3" onclick="openLetter(3)" disabled>💌</button>
-            </div>
-            <div class="letter-unit">
-                <div class="paper" id="paper-4">My</div>
-                <button class="envelope-btn" id="btn-4" onclick="openLetter(4)" disabled>💌</button>
+
+            <div id="buttons-area">
+                <button class="btn-choice yes" onclick="goToProposal()">SÌ</button>
+                <button class="btn-choice no" id="no-btn">NO</button>
             </div>
         </div>
+    </div>
 
-        <div class="letter-unit big">
-            <div class="paper" id="paper-5">Valentine?</div>
-            <button class="envelope-btn" id="btn-5" onclick="openLetter(5)" disabled>💌</button>
-        </div>
-
-        <div id="buttons-area">
-            <button class="btn-choice yes" onclick="alert('❤️')">SÌ</button>
-            <button class="btn-choice no" id="no-btn">NO</button>
+    <div class="page-section" id="proposal-section">
+        <div class="proposal-text">
+            Testo
         </div>
     </div>
 
     <script>
+        let noClickCount = 0;
+
         // Blocco Zoom
-        window.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, {passive: false});
+        window.addEventListener('touchstart', e => { 
+            if (e.touches.length > 1) e.preventDefault(); 
+        }, {passive: false});
 
         function openLetter(num) {
             const btn = document.getElementById(`btn-${num}`);
             const paper = document.getElementById(`paper-${num}`);
 
-            btn.innerText = "✉️"; // Cambia in busta aperta
+            btn.innerText = "✉️";
             btn.classList.add('opened');
-            
             paper.classList.add('revealed');
 
             const next = document.getElementById(`btn-${num + 1}`);
@@ -190,21 +226,40 @@
             }
         }
 
-        // Tasto NO che scappa
+        // Gestione Tasto NO
         const noBtn = document.getElementById('no-btn');
         function moveNo(e) {
+            noClickCount++;
+            
+            // Alert ai 5 clic
+            if (noClickCount === 5) {
+                alert("Risposta sbagliata ritenta");
+            }
+            // Alert ai 10 clic
+            if (noClickCount === 10) {
+                alert("😤😤😤😤😤");
+            }
+
             const maxX = window.innerWidth - noBtn.offsetWidth;
             const maxY = window.innerHeight - noBtn.offsetHeight;
             noBtn.style.position = 'fixed';
             noBtn.style.left = Math.random() * maxX + 'px';
             noBtn.style.top = Math.random() * maxY + 'px';
+            
             if(e) e.preventDefault();
         }
+
         noBtn.addEventListener('mouseenter', moveNo);
         noBtn.addEventListener('touchstart', moveNo);
+
+        // Funzione per scrollare alla proposta
+        function goToProposal() {
+            document.getElementById('proposal-section').scrollIntoView({ behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
+
 
 
 
