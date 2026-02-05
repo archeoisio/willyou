@@ -24,9 +24,8 @@
             user-select: none;
         }
 
-        /* Sezione Principale */
         .page-section {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -63,7 +62,7 @@
             width: 160px;
         }
 
-        /* --- FOGLIO BIANCO --- */
+        /* --- FOGLIO BIANCO (+2px font) --- */
         .paper {
             position: absolute;
             width: 59px; 
@@ -73,12 +72,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 12px; /* Aumentato di 2px */
             font-weight: bold;
             color: var(--heart-red);
-            /* Applicazione font corsivo */
             font-family: 'Dancing Script', cursive;
-            text-transform: none; /* Il corsivo sta meglio senza tutto maiuscolo */
             z-index: 10;
             opacity: 0;
             transform: translateY(6px);
@@ -89,7 +86,7 @@
         .big .paper {
             width: 104px; 
             height: 60px;
-            font-size: 14px;
+            font-size: 16px; /* Aumentato di 2px */
         }
 
         .paper.revealed {
@@ -144,8 +141,9 @@
         .yes { background-color: #4caf50; }
         .no { background-color: #ff4d6d; }
 
-        /* --- SECONDO BLOCCO (PROPOSTA FINALE) --- */
+        /* --- SECONDO BLOCCO (Nascosto inizialmente) --- */
         #proposal-section {
+            display: none; /* Raggiungibile solo dopo il SI */
             background-color: white;
             color: var(--heart-red);
             text-align: center;
@@ -203,7 +201,11 @@
     <script>
         let noClickCount = 0;
 
-        // Blocco Zoom
+        // Forza lo scroll all'inizio sui pulsanti al caricamento
+        window.onload = () => {
+            window.scrollTo(0, 0);
+        };
+
         window.addEventListener('touchstart', e => { 
             if (e.touches.length > 1) e.preventDefault(); 
         }, {passive: false});
@@ -222,23 +224,17 @@
             } else {
                 setTimeout(() => { 
                     document.getElementById('buttons-area').style.display = 'flex'; 
+                    // Centra i bottoni appena appaiono
+                    document.getElementById('buttons-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 800);
             }
         }
 
-        // Gestione Tasto NO
         const noBtn = document.getElementById('no-btn');
         function moveNo(e) {
             noClickCount++;
-            
-            // Alert ai 5 clic
-            if (noClickCount === 5) {
-                alert("Risposta sbagliata ritenta");
-            }
-            // Alert ai 10 clic
-            if (noClickCount === 10) {
-                alert("😤😤😤😤😤");
-            }
+            if (noClickCount === 5) alert("Risposta sbagliata ritenta");
+            if (noClickCount === 10) alert("😤😤😤😤😤");
 
             const maxX = window.innerWidth - noBtn.offsetWidth;
             const maxY = window.innerHeight - noBtn.offsetHeight;
@@ -252,13 +248,17 @@
         noBtn.addEventListener('mouseenter', moveNo);
         noBtn.addEventListener('touchstart', moveNo);
 
-        // Funzione per scrollare alla proposta
         function goToProposal() {
-            document.getElementById('proposal-section').scrollIntoView({ behavior: 'smooth' });
+            const target = document.getElementById('proposal-section');
+            target.style.display = 'flex'; // Rende visibile la sezione
+            setTimeout(() => {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
         }
     </script>
 </body>
 </html>
+
 
 
 
