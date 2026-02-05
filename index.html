@@ -16,7 +16,6 @@
         }
 
         body {
-            /* Scroll bloccato all'inizio */
             overflow: hidden; 
             background-color: var(--bg-pink);
             font-family: 'Georgia', serif;
@@ -137,13 +136,12 @@
             cursor: pointer;
             color: white;
             font-size: 1rem;
-            transition: all 0.3s ease; /* Transizione fluida per l'ingrandimento */
+            transition: all 0.3s ease;
         }
 
         .yes { background-color: #4caf50; z-index: 100; }
         .no { background-color: #ff4d6d; z-index: 100; }
 
-        /* Classe per ingrandire il tasto SI */
         .yes-giant {
             transform: scale(2);
             margin: 20px;
@@ -154,13 +152,14 @@
             background-color: white;
             color: var(--heart-red);
             text-align: center;
-            padding: 40px;
+            padding: 20px;
             box-sizing: border-box;
         }
 
         .proposal-text {
             font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem;
+            font-size: 2rem;
+            line-height: 1.4;
             max-width: 90%;
         }
     </style>
@@ -202,7 +201,8 @@
 
     <div class="page-section" id="proposal-section">
         <div class="proposal-text">
-            Testo
+            🛬 Venerdì 13 Roma-Larnaka arrivo ore 22:15 <br><br>
+            🛫 Lunedì 16 Larnaka-Atene partenza ore 10:25
         </div>
     </div>
 
@@ -211,7 +211,6 @@
         const noBtn = document.getElementById('no-btn');
         const yesBtn = document.getElementById('yes-btn');
 
-        // Disabilita scroll touch (per mobile)
         window.addEventListener('touchmove', e => { 
             if (document.body.style.overflow !== 'auto') e.preventDefault(); 
         }, {passive: false});
@@ -236,22 +235,18 @@
 
         function moveNo(e) {
             noClickCount++;
-            
             if (noClickCount === 5) alert("Risposta sbagliata ritenta");
-            
             if (noClickCount === 10) {
                 alert("😤😤😤😤😤");
-                noBtn.remove(); // Fa sparire il tasto NO
-                yesBtn.classList.add('yes-giant'); // Ingrandisce il tasto SI
+                noBtn.remove();
+                yesBtn.classList.add('yes-giant');
                 return;
             }
-
             const maxX = window.innerWidth - noBtn.offsetWidth;
             const maxY = window.innerHeight - noBtn.offsetHeight;
             noBtn.style.position = 'fixed';
             noBtn.style.left = Math.random() * maxX + 'px';
             noBtn.style.top = Math.random() * maxY + 'px';
-            
             if(e) e.preventDefault();
         }
 
@@ -260,19 +255,13 @@
 
         function goToProposal() {
             if (noBtn) noBtn.remove();
-
             const target = document.getElementById('proposal-section');
             target.style.display = 'flex'; 
-            
-            // Abilita scroll solo per scendere
             document.body.style.overflow = 'auto';
-            
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth' });
-                // Dopo lo scroll, blocca di nuovo tutto per impedire di tornare su
                 setTimeout(() => {
                     document.body.style.overflow = 'hidden';
-                    // Forza la posizione per sicurezza
                     window.scrollTo(0, target.offsetTop);
                 }, 1000);
             }, 50);
@@ -280,6 +269,7 @@
     </script>
 </body>
 </html>
+
 
 
 
