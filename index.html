@@ -69,32 +69,22 @@
 
         .paper {
             position: absolute;
-            width: 59px; 
-            height: 42px;
-            background: white;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px; 
-            font-weight: bold;
-            color: var(--heart-red);
+            width: 59px; height: 42px;
+            background: white; border: 1px solid #ddd;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: bold; color: var(--heart-red);
             font-family: 'Dancing Script', cursive;
-            z-index: 10;
-            opacity: 0;
-            transform: translateY(6px);
+            z-index: 10; opacity: 0; transform: translateY(6px);
             transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .big .paper { width: 104px; height: 60px; font-size: 20px; }
-
         .paper.revealed { opacity: 1; transform: translateY(-20px); }
         .big .paper.revealed { transform: translateY(-30px); }
 
         .envelope-btn {
-            font-size: 60px;
-            background: none; border: none; cursor: pointer;
+            font-size: 60px; background: none; border: none; cursor: pointer;
             z-index: 5; line-height: 1; padding: 0;
         }
 
@@ -102,18 +92,11 @@
         .envelope-btn:disabled { opacity: 0.15; filter: grayscale(1); }
         .opened { pointer-events: none; }
 
-        #buttons-area {
-            display: none;
-            gap: 15px;
-            margin-top: 10px;
-            align-items: center;
-        }
+        #buttons-area { display: none; gap: 15px; margin-top: 10px; align-items: center; }
 
         .btn-choice {
-            padding: 10px 25px;
-            border: none; border-radius: 20px;
-            font-weight: bold; cursor: pointer;
-            color: white; font-size: 1rem;
+            padding: 10px 25px; border: none; border-radius: 20px;
+            font-weight: bold; cursor: pointer; color: white; font-size: 1rem;
             transition: all 0.3s ease;
         }
 
@@ -121,14 +104,16 @@
         .no { background-color: #ff4d6d; z-index: 100; }
         .yes-giant { transform: scale(2); margin: 20px; }
 
+        /* --- SEZIONE FINALE --- */
         #proposal-section {
             display: none;
             background-color: white;
             color: var(--heart-red);
             text-align: center;
-            padding: 38px;
+            padding: 20px;
             box-sizing: border-box;
             flex-direction: column;
+            overflow-y: auto; /* Permette lo scroll interno se la foto è grande */
         }
 
         .proposal-text {
@@ -136,14 +121,21 @@
             font-size: 16px;
             line-height: 1.4;
             max-width: 90%;
+            margin-bottom: 15px;
         }
 
-        /* Stile per il numero del countdown */
         #countdown {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
-            margin-top: 10px;
             display: block;
+            margin: 10px 0;
+        }
+
+        .final-photo {
+            max-width: 80%;
+            border-radius: 10px;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -151,7 +143,6 @@
 
     <div class="page-section" id="intro-section">
         <div class="header-text">Ciao Federica, <br> there is a message for you!</div>
-        
         <div class="main-container">
             <div class="grid-top">
                 <div class="letter-unit"><div class="paper" id="paper-1">Will</div><button class="envelope-btn" id="btn-1" onclick="openLetter(1)">💌</button></div>
@@ -159,12 +150,10 @@
                 <div class="letter-unit"><div class="paper" id="paper-3">Be</div><button class="envelope-btn" id="btn-3" onclick="openLetter(3)" disabled>💌</button></div>
                 <div class="letter-unit"><div class="paper" id="paper-4">My</div><button class="envelope-btn" id="btn-4" onclick="openLetter(4)" disabled>💌</button></div>
             </div>
-
             <div class="letter-unit big">
                 <div class="paper" id="paper-5">Valentine?</div>
                 <button class="envelope-btn" id="btn-5" onclick="openLetter(5)" disabled>💌</button>
             </div>
-
             <div id="buttons-area">
                 <button class="btn-choice yes" id="yes-btn" onclick="goToProposal()">SÌ</button>
                 <button class="btn-choice no" id="no-btn">NO</button>
@@ -179,8 +168,9 @@
             🛫 Martedì 17 Larnaka-Roma 🛫<br>
             partenza ore 10:25<br><br>
             <br>24h di tempo per rispondere!<br> a partire da..adesso!
-            
+            <span id="countdown">24:00:00</span>
         </div>
+        <img src="INSERISCI_LINK_DIRETTO_FOTO_QUI" alt="Sorpresa" class="final-photo">
     </div>
 
     <script>
@@ -226,34 +216,29 @@
         noBtn.addEventListener('mouseenter', moveNo);
         noBtn.addEventListener('touchstart', moveNo);
 
-        // LOGICA TIMER
         function startCountdown() {
             const now = new Date();
-            // Imposta scadenza: Oggi ore 14:00 + 24 ore
-            const deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 0, 0);
+            // Scadenza fissa: Domani alle 14:00
+            let deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 0, 0);
             deadline.setDate(deadline.getDate() + 1);
 
             const display = document.getElementById('countdown');
 
-            const timer = setInterval(() => {
+            function update() {
                 const current = new Date().getTime();
                 const diff = deadline.getTime() - current;
-
                 if (diff <= 0) {
-                    clearInterval(timer);
+                    clearInterval(interval);
                     display.innerHTML = "00:00:00";
                     return;
                 }
-
-                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-                display.innerHTML = 
-                    (h < 10 ? "0" + h : h) + ":" + 
-                    (m < 10 ? "0" + m : m) + ":" + 
-                    (s < 10 ? "0" + s : s);
-            }, 1000);
+                const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const m = Math.floor((diff / 1000 / 60) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+                display.innerHTML = (h<10?'0':"")+h + ":" + (m<10?'0':"")+m + ":" + (s<10?'0':"")+s;
+            }
+            update();
+            const interval = setInterval(update, 1000);
         }
 
         function goToProposal() {
@@ -262,7 +247,7 @@
             target.style.display = 'flex'; 
             document.body.style.overflow = 'auto';
             
-            startCountdown(); // Avvia il timer al click del SI
+            startCountdown();
 
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth' });
@@ -275,6 +260,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
