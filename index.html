@@ -112,7 +112,7 @@
         #proposal-section {
             display: none;
             background-color: #ffffff;
-            background-image: radial-gradient(#e5e5e5 0.7px, transparent 0.7px);
+            background-image: radial-gradient(#fff0f3 1.2px, transparent 1.2px);
             background-size: 5px 5px;
             color: var(--heart-red);
             text-align: center;
@@ -230,24 +230,28 @@
         noBtn.addEventListener('touchstart', moveNo);
 
         function startCountdown() {
-            const display = document.getElementById('countdown');
-            const interval = setInterval(() => {
-                const oraAttuale = new Date().getTime();
-                const diff = dataScadenza - oraAttuale;
+    const display = document.getElementById('countdown');
+    const interval = setInterval(() => {
+        const oraAttuale = new Date().getTime();
+        const diff = dataScadenza - oraAttuale;
 
-                if (diff <= 0) {
-                    clearInterval(interval);
-                    display.innerHTML = "00:00:00";
-                    return;
-                }
-
-                const h = Math.floor(diff / (1000 * 60 * 60));
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-                display.innerHTML = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
-            }, 1000);
+        if (diff <= 0) {
+            clearInterval(interval);
+            display.innerHTML = "00:00:00";
+            return;
         }
+
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        // ABBIAMO AGGIUNTO IL "-" PRIMA DELLE ORE
+        display.innerHTML = "-" + 
+            (h < 10 ? "0" + h : h) + ":" + 
+            (m < 10 ? "0" + m : m) + ":" + 
+            (s < 10 ? "0" + s : s);
+    }, 1000);
+}
 
         function goToProposal() {
             if (noBtn) noBtn.remove();
