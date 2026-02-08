@@ -104,17 +104,22 @@
         .no { background-color: #ff4d6d; z-index: 100; }
         .yes-giant { transform: scale(2); margin: 20px; }
 
-        /* --- SEZIONE FINALE --- */
-        #proposal-section {
-            display: none;
-            background-color: white;
-            color: var(--heart-red);
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-            flex-direction: column;
-            overflow-y: auto; /* Permette lo scroll interno se la foto è grande */
-        }
+ /* --- SEZIONE FINALE CON TEXTURE --- */
+#proposal-section {
+    display: none;
+    /* Fondo bianco con micro-punti picchiettati */
+    background-color: #ffffff;
+    background-image: radial-gradient(#e5e5e5 0.5px, transparent 0.5px);
+    background-size: 4px 4px; /* Dimensione del picchiettato */
+    
+    color: var(--heart-red);
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
 
         .proposal-text {
             font-family: 'Dancing Script', cursive;
