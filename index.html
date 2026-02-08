@@ -32,7 +32,6 @@
             flex-shrink: 0;
         }
 
-        /* Testo sopra le buste */
         .header-text {
             font-family: 'Dancing Script', cursive;
             font-size: 16px;
@@ -122,7 +121,6 @@
         .no { background-color: #ff4d6d; z-index: 100; }
         .yes-giant { transform: scale(2); margin: 20px; }
 
-        /* --- SEZIONE FINALE --- */
         #proposal-section {
             display: none;
             background-color: white;
@@ -138,6 +136,14 @@
             font-size: 16px;
             line-height: 1.4;
             max-width: 90%;
+        }
+
+        /* Stile per il numero del countdown */
+        #countdown {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
         }
     </style>
 </head>
@@ -168,10 +174,11 @@
 
     <div class="page-section" id="proposal-section">
         <div class="proposal-text">
-            🛬 Venerdì 13 Roma-Larnaka arrivo ore 22:15 🛬<br><br>
-            🛫 Martedi 17 Larnaka-Roma partenza ore 10:25🛫<br><br>
-<br>24h di tempo per rispondere!<br> a partire da..adesso!
-            <br> 23:59:59
+            🛬 Venerdì 13 Roma-Larnaka 🛬 <br> 
+            arrivo ore 22:15 <br><br>
+            🛫 Martedì 17 Larnaka-Roma 🛫<br>
+            partenza ore 10:25<br><br>
+            <br>24h di tempo per rispondere!<br> a partire da..adesso!
             
         </div>
     </div>
@@ -181,7 +188,6 @@
         const noBtn = document.getElementById('no-btn');
         const yesBtn = document.getElementById('yes-btn');
 
-        // Blocco scroll touch
         window.addEventListener('touchmove', e => { 
             if (document.body.style.overflow !== 'auto') e.preventDefault(); 
         }, {passive: false});
@@ -220,11 +226,44 @@
         noBtn.addEventListener('mouseenter', moveNo);
         noBtn.addEventListener('touchstart', moveNo);
 
+        // LOGICA TIMER
+        function startCountdown() {
+            const now = new Date();
+            // Imposta scadenza: Oggi ore 14:00 + 24 ore
+            const deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 0, 0);
+            deadline.setDate(deadline.getDate() + 1);
+
+            const display = document.getElementById('countdown');
+
+            const timer = setInterval(() => {
+                const current = new Date().getTime();
+                const diff = deadline.getTime() - current;
+
+                if (diff <= 0) {
+                    clearInterval(timer);
+                    display.innerHTML = "00:00:00";
+                    return;
+                }
+
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                display.innerHTML = 
+                    (h < 10 ? "0" + h : h) + ":" + 
+                    (m < 10 ? "0" + m : m) + ":" + 
+                    (s < 10 ? "0" + s : s);
+            }, 1000);
+        }
+
         function goToProposal() {
             if (noBtn) noBtn.remove();
             const target = document.getElementById('proposal-section');
             target.style.display = 'flex'; 
             document.body.style.overflow = 'auto';
+            
+            startCountdown(); // Avvia il timer al click del SI
+
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth' });
                 setTimeout(() => {
