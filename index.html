@@ -11,26 +11,29 @@
             --heart-red: #ff4d6d;
         }
 
-        html { scroll-behavior: smooth; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background-color: var(--bg-pink);
+            font-family: 'Georgia', serif;
+            user-select: none;
+        }
 
         body {
             overflow-x: hidden;
-            overflow-y: hidden; 
-            background-color: var(--bg-pink);
-            font-family: 'Georgia', serif;
-            margin: 0;
-            user-select: none;
-            min-height: 100vh;
+            overflow-y: hidden; /* Bloccato all'inizio */
+            height: 100vh;
         }
 
         .page-section {
-            height: 100vh;
+            min-height: 100vh; /* Ogni blocco occupa almeno una schermata */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
-            flex-shrink: 0;
+            position: relative;
         }
 
         .header-text {
@@ -105,7 +108,7 @@
         .no { background-color: #ff4d6d; z-index: 100; }
         .yes-giant { transform: scale(2); margin: 20px; }
 
-        /* --- SEZIONE FINALE CON TEXTURE --- */
+        /* --- SEZIONE FINALE --- */
         #proposal-section {
             display: none;
             background-color: #ffffff;
@@ -113,10 +116,9 @@
             background-size: 5px 5px;
             color: var(--heart-red);
             text-align: center;
-            padding: 20px;
+            padding: 40px 20px; /* Padding sopra e sotto per estetica */
             box-sizing: border-box;
             flex-direction: column;
-            min-height: 100vh;
         }
 
         .proposal-text {
@@ -139,9 +141,12 @@
             max-width: 85%;
             border-radius: 12px;
             margin-top: 15px;
-            margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             border: 4px solid var(--bg-pink);
+            /* Assicura che la foto sia l'ultimo elemento e non crei scroll extra */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
@@ -226,7 +231,6 @@
 
         function startCountdown() {
             const display = document.getElementById('countdown');
-
             const interval = setInterval(() => {
                 const oraAttuale = new Date().getTime();
                 const diff = dataScadenza - oraAttuale;
@@ -237,15 +241,11 @@
                     return;
                 }
 
-                // Calcolo ore totali (includendo i giorni rimanenti)
                 const h = Math.floor(diff / (1000 * 60 * 60));
                 const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-                display.innerHTML = 
-                    (h < 10 ? "0" + h : h) + ":" + 
-                    (m < 10 ? "0" + m : m) + ":" + 
-                    (s < 10 ? "0" + s : s);
+                display.innerHTML = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
             }, 1000);
         }
 
@@ -253,9 +253,9 @@
             if (noBtn) noBtn.remove();
             const target = document.getElementById('proposal-section');
             
-            // Sblocca scroll per muoversi tra i blocchi
+            // Sblocca lo scroll verticale ma toglie quello infinito
             window.removeEventListener('touchmove', preventDefault);
-            document.body.style.overflow = 'auto';
+            document.body.style.overflowY = 'auto';
             document.body.style.height = 'auto';
             
             target.style.display = 'flex'; 
@@ -268,6 +268,7 @@
     </script>
 </body>
 </html>
+
 
 
 
