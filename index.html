@@ -14,7 +14,7 @@
         html { scroll-behavior: smooth; }
 
         body {
-            overflow: hidden; 
+            overflow: hidden; /* Inizialmente bloccato */
             background-color: var(--bg-pink);
             font-family: 'Georgia', serif;
             margin: 0;
@@ -104,43 +104,41 @@
         .no { background-color: #ff4d6d; z-index: 100; }
         .yes-giant { transform: scale(2); margin: 20px; }
 
- /* --- SEZIONE FINALE CON TEXTURE --- */
-#proposal-section {
-    display: none;
-    /* Fondo bianco con micro-punti picchiettati */
-    background-color: #ffffff;
-    background-image: radial-gradient(#e5e5e5 0.5px, transparent 0.5px);
-    background-size: 4px 4px; /* Dimensione del picchiettato */
-    
-    color: var(--heart-red);
-    text-align: center;
-    padding: 20px;
-    box-sizing: border-box;
-    flex-direction: column;
-    overflow-y: auto;
-}
-
+        /* --- SEZIONE FINALE CON TEXTURE --- */
+        #proposal-section {
+            display: none;
+            background-color: #ffffff;
+            background-image: radial-gradient(#e5e5e5 0.7px, transparent 0.7px);
+            background-size: 5px 5px;
+            color: var(--heart-red);
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            flex-direction: column;
+        }
 
         .proposal-text {
             font-family: 'Dancing Script', cursive;
-            font-size: 16px;
+            font-size: 18px;
             line-height: 1.4;
             max-width: 90%;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         #countdown {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             display: block;
             margin: 10px 0;
+            font-family: 'Dancing Script', cursive;
         }
 
         .final-photo {
             max-width: 80%;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-top: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 4px solid var(--bg-pink);
         }
     </style>
 </head>
@@ -172,10 +170,10 @@
             arrivo ore 22:15 <br><br>
             🛫 Martedì 17 Larnaka-Roma 🛫<br>
             partenza ore 10:25<br><br>
-            <br>24h di tempo per rispondere!<br> a partire da..adesso!
+            <br>24h di tempo per rispondere!<br> a partire dalle 13:00 di oggi...
             <span id="countdown">24:00:00</span>
         </div>
-        <img src="https://lh3.googleusercontent.com/d/1AmROKsLfotcppaIqiko03VyWJErB7UhN" alt="!!!" class="final-photo">
+        <img src="LINK_DELLA_TUA_FOTO" alt="Sorpresa" class="final-photo">
     </div>
 
     <script>
@@ -183,9 +181,11 @@
         const noBtn = document.getElementById('no-btn');
         const yesBtn = document.getElementById('yes-btn');
 
-        window.addEventListener('touchmove', e => { 
-            if (document.body.style.overflow !== 'auto') e.preventDefault(); 
-        }, {passive: false});
+        // Funzione per gestire il blocco/sblocco dello scroll
+        function preventDefault(e) { e.preventDefault(); }
+        
+        // Inizialmente blocca tutto
+        window.addEventListener('touchmove', preventDefault, {passive: false});
 
         function openLetter(num) {
             const btn = document.getElementById(`btn-${num}`);
@@ -223,8 +223,7 @@
 
         function startCountdown() {
             const now = new Date();
-            // Scadenza fissa: Domani alle 14:00
-            let deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 0, 0);
+            let deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 0, 0);
             deadline.setDate(deadline.getDate() + 1);
 
             const display = document.getElementById('countdown');
@@ -237,10 +236,10 @@
                     display.innerHTML = "00:00:00";
                     return;
                 }
-                const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const m = Math.floor((diff / 1000 / 60) % 60);
-                const s = Math.floor((diff / 1000) % 60);
-                display.innerHTML = (h<10?'0':"")+h + ":" + (m<10?'0':"")+m + ":" + (s<10?'0':"")+s;
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                display.innerHTML = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
             }
             update();
             const interval = setInterval(update, 1000);
@@ -249,22 +248,24 @@
         function goToProposal() {
             if (noBtn) noBtn.remove();
             const target = document.getElementById('proposal-section');
-            target.style.display = 'flex'; 
+            
+            // Sblocca lo scroll permettendo di muoversi tra i blocchi
+            window.removeEventListener('touchmove', preventDefault);
             document.body.style.overflow = 'auto';
+            
+            target.style.display = 'flex'; 
             
             startCountdown();
 
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth' });
-                setTimeout(() => {
-                    document.body.style.overflow = 'hidden';
-                    window.scrollTo(0, target.offsetTop);
-                }, 1000);
+                // NOTA: Abbiamo tolto il blocco che forzava lo scroll su un solo blocco
             }, 50);
         }
     </script>
 </body>
 </html>
+html>
 
 
 
