@@ -14,12 +14,13 @@
         html { scroll-behavior: smooth; }
 
         body {
-            overflow: hidden; /* Inizialmente bloccato */
+            overflow-x: hidden;
+            overflow-y: hidden; /* Bloccato all'inizio */
             background-color: var(--bg-pink);
             font-family: 'Georgia', serif;
             margin: 0;
             user-select: none;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         .page-section {
@@ -170,8 +171,8 @@
             arrivo ore 22:15 <br><br>
             🛫 Martedì 17 Larnaka-Roma 🛫<br>
             partenza ore 10:25<br><br>
-            <br>24h di tempo per rispondere!<br> a partire dalle 13:00 di oggi...
-            <span id="countdown">24:00:00</span>
+            <br>Hai tempo per rispondere!<br> Scadenza: Mezzanotte del 9 Febbraio
+            <span id="countdown">--:--:--</span>
         </div>
         <img src="LINK_DELLA_TUA_FOTO" alt="Sorpresa" class="final-photo">
     </div>
@@ -181,10 +182,7 @@
         const noBtn = document.getElementById('no-btn');
         const yesBtn = document.getElementById('yes-btn');
 
-        // Funzione per gestire il blocco/sblocco dello scroll
         function preventDefault(e) { e.preventDefault(); }
-        
-        // Inizialmente blocca tutto
         window.addEventListener('touchmove', preventDefault, {passive: false});
 
         function openLetter(num) {
@@ -222,50 +220,51 @@
         noBtn.addEventListener('touchstart', moveNo);
 
         function startCountdown() {
-            const now = new Date();
-            let deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 0, 0);
-            deadline.setDate(deadline.getDate() + 1);
+            // SCADENZA FISSA: Mezzanotte tra il 9 e il 10 Febbraio 2026
+            const deadline = new Date(2026, 1, 10, 0, 0, 0).getTime();
 
             const display = document.getElementById('countdown');
 
-            function update() {
-                const current = new Date().getTime();
-                const diff = deadline.getTime() - current;
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const diff = deadline - now;
+
                 if (diff <= 0) {
                     clearInterval(interval);
                     display.innerHTML = "00:00:00";
                     return;
                 }
+
                 const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((diff % (1000 * 60)) / 1000);
-                display.innerHTML = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
-            }
-            update();
-            const interval = setInterval(update, 1000);
+
+                display.innerHTML = 
+                    (h < 10 ? "0" + h : h) + ":" + 
+                    (m < 10 ? "0" + m : m) + ":" + 
+                    (s < 10 ? "0" + s : s);
+            }, 1000);
         }
 
         function goToProposal() {
             if (noBtn) noBtn.remove();
             const target = document.getElementById('proposal-section');
             
-            // Sblocca lo scroll permettendo di muoversi tra i blocchi
+            // Sblocca scroll
             window.removeEventListener('touchmove', preventDefault);
             document.body.style.overflow = 'auto';
+            document.body.style.height = 'auto';
             
             target.style.display = 'flex'; 
-            
             startCountdown();
 
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth' });
-                // NOTA: Abbiamo tolto il blocco che forzava lo scroll su un solo blocco
             }, 50);
         }
     </script>
 </body>
 </html>
-html>
 
 
 
